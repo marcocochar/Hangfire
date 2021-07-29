@@ -47,6 +47,10 @@ namespace HangFire.Web
             //options.Authorization = new[] { new DashboardNoAuthorizationFilter() };
 
             //app.UseAuthentication();
+            //app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            //{
+            //    StatsPollingInterval = 120
+            //});
             app.UseHangfireDashboard();
 
             NavigationMenu.Items.Add(page => new MenuItem("Refresh", "/refresh"));
@@ -65,14 +69,17 @@ namespace HangFire.Web
             RecurringJob.AddOrUpdate("Teste01",
               methodCall: (Expression<Action>)(() => t.Run()),
               "*/1 * * * *",
+              maxAttempt: "0",
               timeZone: TimeZoneInfo.Utc,
+              
               queue: $"job_110");
 
             RecurringJob.AddOrUpdate("Teste02",
                 methodCall: (Expression<Action>)(() => t2.Run()),
                 "*/1 * * * *",
+                maxAttempt: "3",
                 timeZone: TimeZoneInfo.Utc,
-                queue: $"job_111");
+                queue: $"job_110");
         }
     }
 }

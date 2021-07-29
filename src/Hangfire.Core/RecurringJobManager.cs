@@ -110,6 +110,7 @@ namespace Hangfire
                 recurringJob.Cron = cronExpression;
                 recurringJob.TimeZone = options.TimeZone;
                 recurringJob.Queue = options.QueueName;
+                recurringJob.MaxAttempt = options.MaxAttempt;
 
                 if (recurringJob.IsChanged(out var changedFields, out var nextExecution))
                 {

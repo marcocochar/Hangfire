@@ -197,11 +197,22 @@ namespace Hangfire
 
             var retryAttempt = context.GetJobParameter<int>("RetryCount") + 1;
 
-            if (retryAttempt <= Attempts)
+            var maxAttemptString = context.GetJobParameter<string>("MaxAttempt");
+            int maxAttemptInt;
+
+            if (Int32.TryParse(maxAttemptString, out maxAttemptInt) == false)
+            {
+                maxAttemptInt = Attempts;
+            }
+
+            if (maxAttemptInt == 0)
+                maxAttemptInt = -1;
+
+            if (retryAttempt <= maxAttemptInt)
             {
                 ScheduleAgainLater(context, retryAttempt, failedState);
             }
-            else if (retryAttempt > Attempts && OnAttemptsExceeded == AttemptsExceededAction.Delete)
+            else if (retryAttempt > maxAttemptInt && OnAttemptsExceeded == AttemptsExceededAction.Delete)
             {
                 TransitionToDeleted(context, failedState);
             }
@@ -246,6 +257,17 @@ namespace Hangfire
         {
             context.SetJobParameter("RetryCount", retryAttempt);
 
+            var maxAttemptString = context.GetJobParameter<string>("MaxAttempt");
+            int maxAttemptInt;
+
+            if (Int32.TryParse(maxAttemptString, out maxAttemptInt) == false)
+            {
+                maxAttemptInt = Attempts;
+            }
+
+            if (maxAttemptInt == 0)
+                maxAttemptInt = -1;
+
             int delayInSeconds;
             
             if (_delaysInSeconds != null)
@@ -269,7 +291,7 @@ namespace Hangfire
             // If attempt number is less than max attempts, we should
             // schedule the job to run again later.
   
-            var reason = $"Retry attempt {retryAttempt} of {Attempts}: {exceptionMessage}";
+            var reason = $"Retry attempt {retryAttempt} of {maxAttemptInt}: {exceptionMessage}";
 
             var statedData = context.Connection.GetStateData(context.BackgroundJob.Id);
 

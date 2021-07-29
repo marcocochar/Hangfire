@@ -53,5 +53,7 @@ namespace Hangfire
                 _queueName = value;
             }
         }
+
+        public string MaxAttempt { get; internal set; }
     }
 }

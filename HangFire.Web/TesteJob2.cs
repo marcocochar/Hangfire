@@ -9,7 +9,7 @@ namespace HangFire.Web
     {
         public void Run()
         {
-            System.Threading.Thread.Sleep(1000 * 60 * 1);
+            System.Threading.Thread.Sleep(1000 * 10);
             throw new Exception();
         }
     }

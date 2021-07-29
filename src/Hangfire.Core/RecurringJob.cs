@@ -70,15 +70,16 @@ namespace Hangfire
             Instance.Value.AddOrUpdate(id, job, cronExpression, timeZone ?? TimeZoneInfo.Utc, queue);
         }
 
-        public static void AddOrUpdate(
-            string recurringJobId,
-            Expression<Action> methodCall,
-            Func<string> cronExpression,
-            TimeZoneInfo timeZone = null,
-            string queue = EnqueuedState.DefaultQueue)
-        {
-            AddOrUpdate(recurringJobId, methodCall, cronExpression(), timeZone, queue);
-        }
+        //public static void AddOrUpdate(
+        //    string recurringJobId,
+        //    Expression<Action> methodCall,
+        //    Func<string> cronExpression,
+        //    TimeZoneInfo timeZone = null,
+
+        //    string queue = EnqueuedState.DefaultQueue)
+        //{
+        //    AddOrUpdate(recurringJobId, methodCall, cronExpression(), timeZone, queue);
+        //}
 
         public static void AddOrUpdate<T>(
             string recurringJobId,
@@ -94,11 +95,13 @@ namespace Hangfire
             string recurringJobId,
             Expression<Action> methodCall,
             string cronExpression,
+            string maxAttempt,
             TimeZoneInfo timeZone = null,
             string queue = EnqueuedState.DefaultQueue)
         {
+            
             var job = Job.FromExpression(methodCall);
-            Instance.Value.AddOrUpdate(recurringJobId, job, cronExpression, timeZone ?? TimeZoneInfo.Utc, queue);
+            Instance.Value.AddOrUpdate(recurringJobId, job, cronExpression, timeZone ?? TimeZoneInfo.Utc, queue, maxAttempt);
         }
 
         public static void AddOrUpdate<T>(

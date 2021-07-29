@@ -23,6 +23,7 @@ using Hangfire.Client;
 using Hangfire.Common;
 using Hangfire.Logging;
 using Hangfire.Profiling;
+using Hangfire.States;
 using Hangfire.Storage;
 
 namespace Hangfire.Server
@@ -298,6 +299,20 @@ namespace Hangfire.Server
             {
                 if (serverQueues.Contains(currentJob.Queue))
                 {
+                    int lastJobId = 0;
+
+                    if (Int32.TryParse(currentJob.LastJobId, out lastJobId))
+                    {
+                        var stateData = connection.GetStateData(lastJobId.ToString());
+
+                        if (stateData.Name != SucceededState.StateName &&
+                            stateData.Name != DeletedState.StateName &&
+                            stateData.Name != FailedState.StateName)
+                        {
+                            return false;
+                        }
+                    }
+
                     TryEnqueueBackgroundJob(context, connection, recurringJobId, now);
                     
                     return true;

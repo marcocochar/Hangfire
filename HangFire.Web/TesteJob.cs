@@ -10,7 +10,7 @@ namespace HangFire.Web
         [System.Diagnostics.DebuggerStepThrough]
         public void Run()
         {
-            System.Threading.Thread.Sleep(1000 * 60 * 1);
+            System.Threading.Thread.Sleep(1000 * 15);
             throw new Exception();
         }
     }

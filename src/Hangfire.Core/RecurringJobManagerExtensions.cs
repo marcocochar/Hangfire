@@ -50,7 +50,8 @@ namespace Hangfire
             [NotNull] Job job,
             [NotNull] string cronExpression,
             [NotNull] TimeZoneInfo timeZone,
-            [NotNull] string queue)
+            [NotNull] string queue,
+            [CanBeNull] string maxAttempt = "")
         {
             if (manager == null) throw new ArgumentNullException(nameof(manager));
             if (timeZone == null) throw new ArgumentNullException(nameof(timeZone));
@@ -60,7 +61,7 @@ namespace Hangfire
                 recurringJobId,
                 job,
                 cronExpression,
-                new RecurringJobOptions { QueueName = queue, TimeZone = timeZone });
+                new RecurringJobOptions { QueueName = queue, TimeZone = timeZone, MaxAttempt = maxAttempt });
         }
 
         public static void AddOrUpdate(

@@ -65,6 +65,12 @@ namespace Hangfire
                 Cron = recurringJob["Cron"];
             }
 
+            if (recurringJob.TryGetValue("MaxAttempt", out var maxAttemptString) &&
+                int.TryParse(maxAttemptString, out var maxAttempt))
+            {
+                MaxAttempt = maxAttempt.ToString();
+            }
+
             try
             {
                 if (!recurringJob.ContainsKey("Job") || String.IsNullOrWhiteSpace(recurringJob["Job"]))
@@ -113,6 +119,9 @@ namespace Hangfire
             {
                 RetryAttempt = retryAttempt;
             }
+
+
+            
         }
 
         public string RecurringJobId { get; }
@@ -131,6 +140,8 @@ namespace Hangfire
         public int RetryAttempt { get; set; }
 
         public Exception[] Errors => _errors.ToArray();
+
+        public string MaxAttempt { get; set; }
 
         public bool TrySchedule(out DateTime? nextExecution, out Exception error)
         {
@@ -202,6 +213,11 @@ namespace Hangfire
                 result.Add("Cron", Cron);
             }
 
+            if ((_recurringJob.ContainsKey("MaxAttempt") ? _recurringJob["MaxAttempt"] : null) != MaxAttempt)
+            {
+                result.Add("MaxAttempt", MaxAttempt);
+            }
+
             if ((_recurringJob.ContainsKey("TimeZoneId") ? _recurringJob["TimeZoneId"] : null) != TimeZone.Id)
             {
                 result.Add("TimeZoneId", TimeZone.Id);
@@ -261,6 +277,7 @@ namespace Hangfire
             {
                 result.Add("RetryAttempt", "0");
             }
+
 
             return result;
         }
